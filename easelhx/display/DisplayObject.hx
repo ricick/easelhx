@@ -28,6 +28,7 @@
 **/
 package easelhx.display;
 
+import easelhx.events.MouseEvent;
 import js.CanvasRenderingContext2D;
 
 @:native("DisplayObject")
@@ -163,5 +164,8 @@ extern class DisplayObject {
 	* Returns a string representation of this object.
 	**/
 	public function toString() : String;
+	
+	dynamic public function onPress(event:MouseEvent) : Void;
+	dynamic public function onClick(event:MouseEvent) : Void;
 	
 }

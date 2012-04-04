@@ -28,6 +28,7 @@
 **/
 package easelhx.display;
 
+import easelhx.events.MouseEvent;
 import js.DomCanvas;
 
 @:native("Stage")
@@ -90,4 +91,7 @@ extern class Stage extends Container {
 		
 	override public function toString() : String;
 	
+	public function enableMouseOver(frequency:Int):Void;
+	dynamic public function onMouseMove(event:MouseEvent) : Void;
+	public function update():Void;
 }
