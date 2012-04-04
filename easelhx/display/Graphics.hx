@@ -359,15 +359,7 @@ extern class Graphics {
 	 * @param r1 Radius of the outer circle that defines the gradient.
 	 * @return {Graphics} The Graphics instance the method is called on (useful for chaining calls.)	
 	 **/
-	p.beginRadialGradientStroke = function(colors, ratios, x0, y0, r0, x1, y1, r1) {
-		if (this._active) { this._newPath(); }
-		var o = this._ctx.createRadialGradient(x0, y0, r0, x1, y1, r1);
-		for (var i=0, l=colors.length; i<l; i++) {
-			o.addColorStop(ratios[i], colors[i]);
-		}
-		this._strokeInstructions = [new Command(this._setProp, ["strokeStyle", o])];
-		return this;
-	}
+	public function beginRadialGradientStroke(colors:Array<String>, ratios:Array<Float>, x0:Float, y0:Float, r0:Float, x1:Float, y1:Float, r1:Float):Graphics;
 	
 	/**
 	 * Begins a pattern fill using the specified image. This ends the current subpath.
@@ -376,13 +368,7 @@ extern class Graphics {
 	 * "repeat-y", or "no-repeat". Defaults to "repeat".
 	 * @return {Graphics} The Graphics instance the method is called on (useful for chaining calls.)	
 	 **/
-	p.beginBitmapStroke = function(image, repetition) {
-		if (this._active) { this._newPath(); }
-		repetition = repetition || "";
-		var o = this._ctx.createPattern(image, repetition);
-		this._strokeInstructions = [new Command(this._setProp, ["strokeStyle", o])];
-		return this;
-	}
+	public function beginBitmapStroke(image:Dynamic, repetition:String = null):Graphics;
 	
 	
 	/**
@@ -390,24 +376,21 @@ extern class Graphics {
 	 * @method endStroke
 	 * @return {Graphics} The Graphics instance the method is called on (useful for chaining calls.)
 	 **/
-	p.endStroke = function() {
-		this.beginStroke();
-		return this;
-	}
+	public function endStroke():Graphics;
 	
 	/**
 	 * Maps the familiar ActionScript curveTo() method to the functionally similar quatraticCurveTo() method.
 	 * @property curveTo
 	 * @type Function
 	 **/
-	p.curveTo = p.quadraticCurveTo;
+	public var curveTo;
 	
 	/**
 	 * Maps the familiar ActionScript drawRect() method to the functionally similar rect() method.
 	 * @property drawRect
 	 * @type Function
 	 **/
-	p.drawRect = p.rect;
+	public var drawRect;
 	
 	/**
 	 * Draws a rounded rectangle with all corners with the specified radius.
@@ -419,10 +402,7 @@ extern class Graphics {
 	 * @param {Number} radius Corner radius.
 	 * @return {Graphics} The Graphics instance the method is called on (useful for chaining calls.)
 	 **/
-	p.drawRoundRect = function(x, y, w, h, radius) {
-		this.drawRoundRectComplex(x, y, w, h, radius, radius, radius, radius);
-		return this;
-	}
+	public function drawRoundRect(x:Float, y:Float, w:Float, h:Float, radius:Float):Graphics;
 	
 	/**
 	 * Draws a rounded rectangle with different corner radiuses.
@@ -437,31 +417,7 @@ extern class Graphics {
 	 * @param {Number} radiusBL Bottom left corner radius.
 	 * @return {Graphics} The Graphics instance the method is called on (useful for chaining calls.)
 	 **/
-	p.drawRoundRectComplex = function(x, y, w, h, radiusTL, radiusTR, radiusBR, radiusBL) {
-		this._dirty = this._active = true;
-		var pi = Math.PI, arc=this._ctx.arc, lineTo=this._ctx.lineTo;
-		
-		this._activeInstructions.push(
-			new Command(this._ctx.moveTo, [x+radiusTL, y]),
-			new Command(lineTo, [x+w-radiusTR, y]),
-			(radiusTR>=0) ?
-				new Command(arc, [x+w-radiusTR, y+radiusTR, radiusTR, -pi/2, 0]) :
-				new Command(arc, [x+w, y, -radiusTR, pi, pi/2, true]) ,
-			new Command(lineTo, [x+w, y+h-radiusBR]),
-			(radiusBL>=0) ?
-				new Command(arc, [x+w-radiusBR, y+h-radiusBR, radiusBR, 0, pi/2]) :
-				new Command(arc, [x+w, y+h, -radiusBR, -pi/2, pi, true]) ,
-			new Command(lineTo, [x+radiusBL, y+h]),
-			(radiusBL>=0) ?
-				new Command(arc, [x+radiusBL, y+h-radiusBL, radiusBL, pi/2, pi]) :
-				new Command(arc, [x, y+h, -radiusBL, 0, -pi/2, true]) ,
-			new Command(lineTo, [x, y+radiusTL]),
-			(radiusTL>=0) ?
-				new Command(arc, [x+radiusTL, y+radiusTL, radiusTL, pi, -pi/2]) :
-				new Command(arc, [x, y, -radiusTL, pi/2, 0, true])
-		);
-		return this;
-	} 
+	public function drawRoundRectComplex(x:Float, y:Float, w:Float, h:Float, radiusTL:Float, radiusTR:Float, radiusBR:Float, radiusBL:Float):Graphics;
 	
 	/**
 	 * Draws a circle with the specified radius at (x, y).
@@ -484,10 +440,7 @@ extern class Graphics {
 	 * @param {Number} radius Radius of circle.
 	 * @return {Graphics} The Graphics instance the method is called on (useful for chaining calls.)
 	 **/
-	p.drawCircle = function(x, y, radius) {
-		this.arc(x, y, radius, 0, Math.PI*2);
-		return this;
-	}
+	public function drawCircle(x:Float, y:Float, radius:Float):Graphics;
 	
 	/**
 	 * Draws an ellipse (oval).
@@ -498,25 +451,7 @@ extern class Graphics {
 	 * @param {Number} h
 	 * @return {Graphics} The Graphics instance the method is called on (useful for chaining calls.)
 	 **/
-	p.drawEllipse = function(x, y, w, h) {
-		this._dirty = this._active = true;
-		var k = 0.5522848;
-		var ox = (w / 2) * k;
-		var oy = (h / 2) * k;
-		var xe = x + w;
-		var ye = y + h;
-		var xm = x + w / 2;
-		var ym = y + h / 2;
-			
-		this._activeInstructions.push(
-			new Command(this._ctx.moveTo, [x, ym]),
-			new Command(this._ctx.bezierCurveTo, [x, ym-oy, xm-ox, y, xm, y]),
-			new Command(this._ctx.bezierCurveTo, [xm+ox, y, xe, ym-oy, xe, ym]),
-			new Command(this._ctx.bezierCurveTo, [xe, ym+oy, xm+ox, ye, xm, ye]),
-			new Command(this._ctx.bezierCurveTo, [xm-ox, ye, x, ym+oy, x, ym])
-		);
-		return this;
-	}
+	public function drawEllipse(x:Float, y:Float, w:Float, h:Float):Graphics;
 	
 	/**
 	 * Draws a star if pointSize is greater than 0 or a regular polygon if pointSize is 0 with the specified number of points.
@@ -533,25 +468,7 @@ extern class Graphics {
 	 * right of the center.
 	 * @return {Graphics} The Graphics instance the method is called on (useful for chaining calls.)
 	 **/
-	p.drawPolyStar = function(x, y, radius, sides, pointSize, angle) {
-		this._dirty = this._active = true;
-		if (pointSize == null) { pointSize = 0; }
-		pointSize = 1-pointSize;
-		if (angle == null) { angle = 0; }
-		else { angle /= 180/Math.PI; }
-		var a = Math.PI/sides;
-		
-		this._activeInstructions.push(new Command(this._ctx.moveTo, [x+Math.cos(angle)*radius, y+Math.sin(angle)*radius]));
-		for (var i=0; i<sides; i++) {
-			angle += a;
-			if (pointSize != 1) {
-				this._activeInstructions.push(new Command(this._ctx.lineTo, [x+Math.cos(angle)*radius*pointSize, y+Math.sin(angle)*radius*pointSize]));
-			}
-			angle += a;
-			this._activeInstructions.push(new Command(this._ctx.lineTo, [x+Math.cos(angle)*radius, y+Math.sin(angle)*radius]));
-		}
-		return this;
-	}
+	public function drawPolyStar(x:Float, y:Float, radius:Float, sides:Int, pointSize:Float, angle:Float):Graphics;
 	
 	/**
 	 * Decodes a compact encoded path string into a series of draw instructions.
@@ -581,305 +498,5 @@ extern class Graphics {
 	 * @param {String} str The path string to decode.
 	 * @return {Graphics} A clone of the current Graphics instance.
 	 **/
-	p.p = p.decodePath = function(str) {
-		var instructions = [this.moveTo, this.lineTo, this.quadraticCurveTo, this.bezierCurveTo];
-		var paramCount = [2, 2, 4, 6];
-		var i=0, l=str.length;
-		var params = [];
-		var x=0, y=0;
-		var base64 = Graphics.BASE_64;
-		
-		while (i<l) {
-			var n = base64[str.charAt(i)];
-			var fi = n>>3; // highest order bits 1-3 code for operation.
-			var f = instructions[fi];
-			// check that we have a valid instruction & that the unused bits are empty:
-			if (!f || (n&3)) { throw("bad path data"); return this; }
-			var pl = paramCount[fi];
-			if (!fi) { x=y=0; }
-			params.length = 0;
-			i++;
-			var charCount = (n>>2&1)+2;  // 4th header bit indicates number size for this operation.
-			for (var p=0; p<pl; p++) {
-				var num = base64[str.charAt(i)];
-				var sign = (num>>5) ? -1 : 1;
-				num = ((num&31)<<6)|(base64[str.charAt(i+1)]);
-				if (charCount == 3) { num = (num<<6)|(base64[str.charAt(i+2)]); }
-				num = sign*num/10;
-				if (p%2) { x = (num += x); }
-				else { y = (num += y); }
-				params[p] = num;
-				i += charCount;
-			}
-			f.apply(this,params);
-		}
-		return this;
-	}
-	
-	/**
-	 * Returns a clone of this Graphics instance.
-	 * @method clone
-	 @return {Graphics} A clone of the current Graphics instance.
-	 **/
-	p.clone = function() {
-		var o = new Graphics();
-		o._instructions = this._instructions.slice();
-		o._activeInstructions = this._activeInstructions.slice();
-		o._oldInstructions = this._oldInstructions.slice();
-		if (this._fillInstructions) { o._fillInstructions = this._fillInstructions.slice(); }
-		if (this._strokeInstructions) { o._strokeInstructions = this._strokeInstructions.slice(); }
-		if (this._strokeStyleInstructions) { o._strokeStyleInstructions = this._strokeStyleInstructions.slice(); }
-		o._active = this._active;
-		o._dirty = this._dirty;
-		return o;
-	}
-		
-	/**
-	 * Returns a string representation of this object.
-	 * @method toString
-	 * @return {String} a string representation of the instance.
-	 **/
-	p.toString = function() {
-		return "[Graphics]";
-	}
-	
-	
-// tiny API:
-	/** Shortcut to moveTo.
-	 * @property mt
-	 * @protected
-	 * type Function
-	 **/
-	p.mt = p.moveTo;
-	
-	/** Shortcut to lineTo.
-	 * @property lt
-	 * @protected
-	 * type Function
-	 **/
-	p.lt = p.lineTo;
-	
-	/** Shortcut to arcTo.
-	 * @property at
-	 * @protected
-	 * type Function
-	 **/
-	p.at = p.arcTo;
-	
-	/** Shortcut to bezierCurveTo.
-	 * @property bt
-	 * @protected
-	 * type Function
-	 **/
-	p.bt = p.bezierCurveTo;
-	
-	/** Shortcut to quadraticCurveTo / curveTo.
-	 * @property qt
-	 * @protected
-	 * type Function
-	 **/
-	p.qt = p.quadraticCurveTo;
-	
-	/** Shortcut to arc.
-	 * @property a
-	 * @protected
-	 * type Function
-	 **/
-	p.a = p.arc;
-	
-	/** Shortcut to rect.
-	 * @property r
-	 * @protected
-	 * type Function
-	 **/
-	p.r = p.rect;
-	
-	/** Shortcut to closePath.
-	 * @property cp
-	 * @protected
-	 * type Function
-	 **/
-	p.cp = p.closePath;
-	
-	/** Shortcut to clear.
-	 * @property c
-	 * @protected
-	 * type Function
-	 **/
-	p.c = p.clear;
-	
-	/** Shortcut to beginFill.
-	 * @property f
-	 * @protected
-	 * type Function
-	 **/
-	p.f = p.beginFill;
-	
-	/** Shortcut to beginLinearGradientFill.
-	 * @property lf
-	 * @protected
-	 * type Function
-	 **/
-	p.lf = p.beginLinearGradientFill;
-	
-	/** Shortcut to beginRadialGradientFill.
-	 * @property rf
-	 * @protected
-	 * type Function
-	 **/
-	p.rf = p.beginRadialGradientFill;
-	
-	/** Shortcut to beginBitmapFill.
-	 * @property bf
-	 * @protected
-	 * type Function
-	 **/
-	p.bf = p.beginBitmapFill;
-	
-	/** Shortcut to endFill.
-	 * @property ef
-	 * @protected
-	 * type Function
-	 **/
-	p.ef = p.endFill;
-	
-	/** Shortcut to setStrokeStyle.
-	 * @property ss
-	 * @protected
-	 * type Function
-	 **/
-	p.ss = p.setStrokeStyle;
-	
-	/** Shortcut to beginStroke.
-	 * @property s
-	 * @protected
-	 * type Function
-	 **/
-	p.s = p.beginStroke;
-	
-	/** Shortcut to beginLinearGradientStroke.
-	 * @property ls
-	 * @protected
-	 * type Function
-	 **/
-	p.ls = p.beginLinearGradientStroke;
-	
-	/** Shortcut to beginRadialGradientStroke.
-	 * @property rs
-	 * @protected
-	 * type Function
-	 **/
-	p.rs = p.beginRadialGradientStroke;
-	
-	/** Shortcut to beginBitmapStroke.
-	 * @property bs
-	 * @protected
-	 * type Function
-	 **/
-	p.bs = p.beginBitmapStroke;
-	
-	/** Shortcut to endStroke.
-	 * @property es
-	 * @protected
-	 * type Function
-	 **/
-	p.es = p.endStroke;
-	
-	/** Shortcut to drawRect.
-	 * @property dr
-	 * @protected
-	 * type Function
-	 **/
-	p.dr = p.drawRect;
-	
-	/** Shortcut to drawRoundRect.
-	 * @property rr
-	 * @protected
-	 * type Function
-	 **/
-	p.rr = p.drawRoundRect;
-	
-	/** Shortcut to drawRoundRectComplex.
-	 * @property rc
-	 * @protected
-	 * type Function
-	 **/
-	p.rc = p.drawRoundRectComplex;
-	
-	/** Shortcut to drawCircle.
-	 * @property dc
-	 * @protected
-	 * type Function
-	 **/
-	p.dc = p.drawCircle;
-	
-	/** Shortcut to drawEllipse.
-	 * @property de
-	 * @protected
-	 * type Function
-	 **/
-	p.de = p.drawEllipse;
-	
-	/** Shortcut to drawPolyStar.
-	 * @property dp
-	 * @protected
-	 * type Function
-	 **/
-	p.dp = p.drawPolyStar;
-	
-	/** Shortcut to decodePath.
-	 * @property p
-	 * @protected
-	 * type Function
-	 **/
-	p.p
-	
-	
-// private methods:
-	/**
-	 * @method _updateInstructions
-	 * @protected
-	 **/
-	p._updateInstructions = function() {
-		this._instructions = this._oldInstructions.slice()
-		this._instructions.push(Graphics.beginCmd);
-		 
-		if (this._fillInstructions) { this._instructions.push.apply(this._instructions, this._fillInstructions); }
-		if (this._strokeInstructions) {
-			this._instructions.push.apply(this._instructions, this._strokeInstructions);
-			if (this._strokeStyleInstructions) {
-				this._instructions.push.apply(this._instructions, this._strokeStyleInstructions);
-			}
-		}
-		
-		this._instructions.push.apply(this._instructions, this._activeInstructions);
-		
-		if (this._fillInstructions) { this._instructions.push(Graphics.fillCmd); }
-		if (this._strokeInstructions) { this._instructions.push(Graphics.strokeCmd); }
-	}
-	
-	/**
-	 * @method _newPath
-	 * @protected
-	 **/
-	p._newPath = function() {
-		if (this._dirty) { this._updateInstructions(); }
-		this._oldInstructions = this._instructions;
-		this._activeInstructions = [];
-		this._active = this._dirty = false;
-	}
-	
-	// used to create Commands that set properties:
-	/**
-	 * used to create Commands that set properties
-	 * @method _setProp
-	 * @param {String} name
-	 * @param {String} value
-	 * @protected
-	 **/
-	p._setProp = function(name, value) {
-		this[name] = value;
-	}
-
-window.Graphics = Graphics;
-}(window));
+	public function decodePath(str:String):Graphics;
+}
