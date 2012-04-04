@@ -69,8 +69,6 @@ extern class Text extends DisplayObject {
 	**/
 	public function new( text : String, font : String, ?color : String ) : Void;
 	
-// public methods:
-	override public function draw( ctx : Dynamic, ignoreCache : Bool ) : Bool;
 	
 	/**
 	* Returns the measured, untransformed width of the text.
