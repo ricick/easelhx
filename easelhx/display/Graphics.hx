@@ -80,7 +80,7 @@ extern class Graphics {
 	 * @return A CSS compatible color string based on the specified RGB numeric color values in the format 
 	 * "rgba(255,255,255,1.0)", or if alpha is null then in the format "rgb(255,255,255)".
 	 **/
-	public static function getRGB(r:UInt, g:UInt, b:UInt, alpha:UInt):String;
+	public static function getRGB(r:Int, g:Int, b:Int, alpha:Int):String;
 	
 	/**
 	 * Returns a CSS compatible color string based on the specified HSL numeric color values in the format "hsla(360,100,100,1.0)", 
@@ -96,7 +96,7 @@ extern class Graphics {
 	 * "hsla(360,100,100,1.0)", or if alpha is null then in the format "hsl(360,100,100)". For example, 
 	 * Graphics.getHSL(150, 100, 70) will return "hsl(150,100,70)".
 	 **/
-	public static function getHSL(hue:UInt, saturation:UInt, lightness:UInt, alpha:UInt):String;
+	public static function getHSL(hue:Int, saturation:Int, lightness:Int, alpha:Int):String;
 	
 	/**
 	 * Map of Base64 characters to values. Used by decodePath().
@@ -383,14 +383,14 @@ extern class Graphics {
 	 * @property curveTo
 	 * @type Function
 	 **/
-	public var curveTo;
+	public function curveTo(cpx:Float, cpy:Float, x:Float, y:Float):Graphics;
 	
 	/**
 	 * Maps the familiar ActionScript drawRect() method to the functionally similar rect() method.
 	 * @property drawRect
 	 * @type Function
 	 **/
-	public var drawRect;
+	public function drawRect(x:Float, y:Float, w:Float, h:Float):Graphics;
 	
 	/**
 	 * Draws a rounded rectangle with all corners with the specified radius.

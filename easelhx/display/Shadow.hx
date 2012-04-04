@@ -1,6 +1,7 @@
-/**
-* Bitmap by Grant Skinner. Dec 5, 2010
-* Visit www.gskinner.com/blog for documentation, updates and more free code.
+package easelhx.display;
+/*
+* Shadow by Grant Skinner. Dec 5, 2010
+* Visit http://easeljs.com/ for documentation, updates and examples.
 *
 *
 * Copyright (c) 2010 Grant Skinner
@@ -25,52 +26,81 @@
 * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 * OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+/**
+* The Easel Javascript library provides a retained graphics mode for canvas 
+* including a full, hierarchical display list, a core interaction model, and 
+* helper classes to make working with Canvas much easier.
+* @module EaselJS
 **/
-package easelhx.display;
 
 @:native("Shadow")
 extern class Shadow {
 
+/**
+* Encapsulates the properties required to define a shadow to apply to a DisplayObject via it's .shadow property.
+* @class Shadow
+* @constructor
+* @param {String} color The color of the shadow.
+* @param {Number} offsetX The x offset of the shadow.
+* @param {Number} offsetY The y offset of the shadow.
+* @param {Number} blur The size of the blurring effect.
+**/
+public function new(color:String, offsetX:Float, offsetY:Float, blur:Float):Void;
+
 // static public properties:
 	/**
-	* An identity shadow object (all properties are set to 0). Read-only.
-	* @static
-	**/
-	public static var identity : Shadow;
+	 * An identity shadow object (all properties are set to 0). Read-only.
+	 * @property identity
+	 * @type Shadow
+	 * @static
+	 * @final
+	 **/
+	public static var identity:Shadow; // set at bottom of class definition.
 	
 // public properties:
-	/** The blur of the shadow. **/
-	public var blur( default, default ) : Float;
+	/** The color of the shadow.
+	 * property color
+	 * @type String
+	 * @default null
+	*/
+	public var color:String;
 	
-	/** The color of the shadow. **/
-	public var color( default, default ) : Int;
+	/** The x offset of the shadow.
+	 * property offsetX
+	 * @type Number
+	 * @default 0
+	*/
+	public var offsetX:Float;
 	
-	/** The x offset of the shadow. **/
-	public var offsetX( default, default ) : Float;
+	/** The y offset of the shadow.
+	 * property offsetY
+	 * @type Number
+	 * @default 0
+	*/
+	public var offsetY:Float;
 	
-	/** The y offset of the shadow. **/
-	public var offsetY( default, default ) : Float;
-	
-// constructor:
-	/**
-	* Constructs a new Shadow object.
-	* @param color The color of the shadow.
-	* @param offsetX The x offset of the shadow.
-	* @param offsetY The y offset of the shadow.
-	* @param blur The blur of the shadow.
-	* @class Encapsulates the properties required to define a shadow to apply to a DisplayObject via it's .shadow property.
-	**/
-	public function new( color : Int, offsetX : Float, offsetY : Float, blur : Float ) : Void;
+	/** The blur of the shadow.
+	 * property blur
+	 * @type Number
+	 * @default 0
+	*/
+	public var blur:Float;
 	
 // public methods:
 	/**
-	* Returns a string representation of this object.
-	**/
-	public function toString() : String;
+	 * Returns a string representation of this object.
+	 * @method toString
+	 * @return {String} a string representation of the instance.
+	 **/
+	public function toString():String;
+	
 	
 	/**
-	* Returns a clone of this object.
-	**/
-	public function clone() : Shadow;
-	
+	 * Returns a clone of this Shadow instance.
+	 * @method clone
+	 @return {Shadow} A clone of the current Shadow instance.
+	 **/
+	 public function clone():Shadow;
 }
