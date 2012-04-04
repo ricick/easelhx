@@ -1,10 +1,11 @@
-/**
-* Bitmap by Grant Skinner. Dec 5, 2010
-* Visit www.gskinner.com/blog for documentation, updates and more free code.
+package easelhx.display;
+/*
+* SpriteSheet by Grant Skinner. Dec 5, 2010
+* Visit http://easeljs.com/ for documentation, updates and examples.
 *
 *
 * Copyright (c) 2010 Grant Skinner
-* 
+*
 * Permission is hereby granted, free of charge, to any person
 * obtaining a copy of this software and associated documentation
 * files (the "Software"), to deal in the Software without
@@ -13,10 +14,10 @@
 * copies of the Software, and to permit persons to whom the
 * Software is furnished to do so, subject to the following
 * conditions:
-* 
+*
 * The above copyright notice and this permission notice shall be
 * included in all copies or substantial portions of the Software.
-* 
+*
 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
 * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -25,69 +26,155 @@
 * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 * OTHER DEALINGS IN THE SOFTWARE.
-**/
-package easelhx.display;
+*/
 
+/**
+ * The Easel Javascript library provides a retained graphics mode for canvas
+ * including a full, hierarchical display list, a core interaction model, and
+ * helper classes to make working with Canvas much easier.
+ * @module EaselJS
+ **/
+/**
+ * Encapsulates the properties and methods associated with a sprite sheet. A sprite sheet is a series of images (usually animation frames) combined
+ * into a larger image (or images). For example, an animation consisting of 8 100x100 images could be combined into a 400x200
+ * sprite sheet (4 frames across by 2 high).<br/><br/>
+ * The data passed to the SpriteSheet constructor defines three critical pieces of information:<OL>
+ *    <LI> The image or images to use.</LI>
+ *    <LI> The positions of individual image frames. This data can be represented in one of two ways:
+ *    As a regular grid of sequential, equal-sized frames, or as individually defined, variable sized frames arranged in an irregular (non-sequential) fashion.</LI>
+ *    <LI> Likewise, animations can be represented in two ways: As a series of sequential frames, defined by a start and end frame [0,3], or as a list of frames [0,1,2,3].
+ * </OL>
+ * The easiest way to understand the data format is to see an example:
+ * <pre><code>data = {
+&nbsp;
+// DEFINING IMAGES:
+&#9;// list of images or image URIs to use. SpriteSheet can handle preloading.
+&#9;// the order dictates their index value for frame definition.
+&#9;images: [image1, "path/to/image2.png"],
+&nbsp;
+// DEFINING FRAMES:
+&nbsp;
+&#9;// the simple way to define frames, only requires frame size because frames are consecutive:
+&#9;// define frame width/height, and optionally the frame count and registration point x/y.
+&#9;// if count is omitted, it will be calculated automatically based on image dimensions.
+&#9;frames: {width:64, height:64, count:20, regX: 32, regY:64},
+&nbsp;
+&#9;// OR, the complex way that defines individual rects for frames.
+&#9;// The 5th value is the image index per the list defined in "images" (defaults to 0).
+&#9;frames: [
+&#9;	// x, y, width, height, image index, regX, regY
+&#9;	[0,0,64,64,0,32,64],
+&#9;	[64,0,96,64,0]
+&#9;],
+&nbsp;
+// DEFINING ANIMATIONS:
+&nbsp;
+&#9;// simple animation definitions. Define a consecutive range of frames.
+&#9;// also optionally define a "next" animation name for sequencing.
+&#9;// setting next to false makes it pause when it reaches the end.
+&#9;animations: {
+&#9;	// start, end, next, frequency
+&#9;	run: [0,8],
+&#9;	jump: [9,12,"run",2],
+&#9;	stand: [13]
+&#9;}
+&nbsp;
+&#9;// the complex approach which specifies every frame in the animation by index.
+&#9;animations: {
+&#9;	run: {
+&#9;		frames: [1,2,3,3,2,1]
+&#9;	},
+&#9;	jump: {
+&#9;		frames: [1,4,5,6,1],
+&#9;		next: "run",
+&#9;		frequency: 2
+&#9;	},
+&#9;	stand: { frames: [7] }
+&#9;}
+&nbsp;
+&#9;// the above two approaches can be combined, you can also use a single frame definition:
+&#9;animations: {
+&#9;	run: [0,8,true,2],
+&#9;	jump: {
+&#9;		frames: [8,9,10,9,8],
+&#9;		next: "run",
+&#9;		frequency: 2
+&#9;	},
+&#9;	stand:7
+&#9;}
+}</code></pre>
+ * &nbsp;
+ * For example, to define a simple sprite sheet, with a single image "sprites.jpg" arranged in a regular 50x50 grid
+ * with two animations, "run" looping from frame 0-4 inclusive, and "jump" playing from frame 5-8 and sequencing back to run:
+ * <pre><code>data = {
+&#9;images: ["sprites.jpg"],
+&#9;frames: {frameWidth:50, frameHeight:50},
+&#9;animations: {run:[0,4], jump:[5,8,"run"]}
+}</code></pre>
+ 
+ * @class SpriteSheet
+ * @constructor
+ * @param data
+ **/
 @:native("SpriteSheet")
-extern class SpriteSheet {
-
+extern class SpriteSheet{
+	public function new(data:Dynamic):Void;
 // public properties:
-	/** The Image, Canvas, or Video instance to use as a sprite sheet. **/
-	public var image( default, default ) : Dynamic;
-	
-	/** The width in pixels of each frame on the sprite sheet image. **/
-	public var frameWidth( default, default ) : Float;
-	
-	/** The height in pixels of each frame on the sprite sheet image. **/
-	public var frameHeight( default, default ) : Float;
-	
-	/** Defines named frames and frame sequences. Frame data is specified as a generic object, where each property 
-	* name will be used to define a new named frame or sequence. Named frames specify a frame number. Sequences are 
-	* defined using an array of 2 or 3 values: the start frame, the end frame, and optionally the name of the next sequence 
-	* to play.<br/><br/>For example, examine the following frame data:<br/>{walk:[0,20], shoot:[21,25,"walk"], 
-	* crouch:[26,30,false], stand:31}<br/>This will create 3 sequences and a named frame. The first sequence will be named 
-	* "walk", and will loop frames 0 to 20 inclusive. The second sequence will be named "shoot", and will play frames 21 to 25 
-	* then play the walk sequence. The third sequence "crouch" will play frames 26 to 30 then pause on frame 30, due to false 
-	* being passed as the next sequence. The named frame "stand" will display frame 31. **/
-	public var frameData( default, default ) : Dynamic;
-	
-	/** The loop property is only used if no frameData is specified, and indicates whether all frames (as specified with 
-	* totalFrames) should loop. If false, the animation will play to totalFrames, then pause. **/
-	public var loop( default, default ) : Bool;
-	
-	/** Specifies the total number of frames in the sprite sheet if no frameData is specified. This is useful for 
-	* excluding extraneous frames (for example, if you have 7 frames in a 2x4 sprite sheet). The total frames will be 
-	* automatically calculated by BitmapSequence based on frame and image dimensions if totalFrames is 0. **/
-	public var totalFrames( default, default ) : Int;
-	
-// constructor:
 	/**
-	* Constructs a new SpriteSheet object.
-	* @param image The Image, Canvas, or Video instance to use as a sprite sheet.
-	* @param frameWidth The width in pixels of each frame on the sprite sheet.
-	* @param frameHeight The height in pixels of each frame on the sprite sheet.
-	* @param frameData Defines named frames and frame sequences. See the frameData property for more information.
-	* @class Encapsulates the properties associated with a sprite sheet. A sprite sheet is a series of images (usually animation 
-	* frames) combined into a single image on a regular grid. For example, an animation consisting of 8 100x100 images could be 
-	* combined into a 400x200 sprite sheet (4 frames across by 2 high).
-	* The simplest form of sprite sheet has values for the image, frameWidth, and frameHeight properties, but does not include frameData. 
-	* It will then play all of the frames in the animation and loop if the loop property is true. In this simple mode, you can also 
-	* set the totalFrames property if you have extraneous frames in your sprite sheet (for example, a 2x4 frame sprite sheet, with only 
-	* 7 frames used).<br/><br/>
-	* More complex sprite sheets include a frameData property, which provides named frames and animations which can be played and sequenced 
-	* together. See frameData for more information.
-	**/
-	public function new( image : Dynamic, frameWidth : Float, frameHeight : Float, frameData : Dynamic ) : Void;
-	
+	 * Read-only property indicating whether all images are finished loading.
+	 * @property complete
+	 * @type Boolean
+	 **/
+	public var complete:Bool;
 // public methods:
 	/**
-	* Returns a string representation of this object.
-	**/
-	public function toString() : String;
+	 * Returns the total number of frames in the specified animation, or in the whole sprite
+	 * sheet if the animation param is omitted.
+	 * @param {String} animation The name of the animation to get a frame count for.
+	 * @return {Number} The number of frames in the animation, or in the entire sprite sheet if the animation param is omitted.
+	*/
+	public function getNumFrames(animation:String):Float;
 	
 	/**
-	* Returns a clone of this object.
-	**/
-	public function clone() : SpriteSheet;
+	 * Returns an array of all available animation names as strings.
+	 * @method getAnimations
+	 * @return {Array} an array of animation names available on this sprite sheet.
+	 **/
+	public function getAnimations():Array<String>;
 	
+	/**
+	 * Returns an object defining the specified animation. The returned object has a
+	 * frames property containing an array of the frame id's in the animation, a frequency
+	 * property indicating the advance frequency for this animation, a name property, 
+	 * and a next property, which specifies the default next animation. If the animation
+	 * loops, the name and next property will be the same.
+	 * @method getAnimations
+	 * @return {Object} a generic object with frames, frequency, name, and next properties.
+	 **/
+	public function getAnimation():Dynamic;
+	
+	/**
+	 * Returns an object specifying the image and source rect of the specified frame. The returned object
+	 * has an image property holding a reference to the image object in which the frame frame is found,
+	 * and a rect property containing a Rectangle instance which defines the boundaries for the
+	 * frame within that image.
+	 * @method getFrame
+	 * @param {Number} frameIndex The index of the frame.
+	 * @return {Object} a generic object with image and rect properties. Returns null if the frame does not exist, or the image is not fully loaded.
+	 **/
+	public function getFrame(frameIndex:Int):Dynamic;
+	
+	/**
+	 * Returns a string representation of this object.
+	 * @method toString
+	 * @return {String} a string representation of the instance.
+	 **/
+	public function toString():String;
+
+	/**
+	 * Returns a clone of the SpriteSheet instance.
+	 * @method clone
+	 * @return {SpriteSheet} a clone of the SpriteSheet instance.
+	 **/
+	public function clone():SpriteSheet;
 }
