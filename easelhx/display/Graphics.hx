@@ -80,7 +80,7 @@ extern class Graphics {
 	 * @return A CSS compatible color string based on the specified RGB numeric color values in the format 
 	 * "rgba(255,255,255,1.0)", or if alpha is null then in the format "rgb(255,255,255)".
 	 **/
-	public static function getRGB(r:Int, g:Int, b:Int, alpha:Int):String;
+	public static function getRGB(r:Int, g:Int, b:Int, alpha:Int = null):String;
 	
 	/**
 	 * Returns a CSS compatible color string based on the specified HSL numeric color values in the format "hsla(360,100,100,1.0)", 
