@@ -290,7 +290,7 @@ extern class DisplayObject {
 	 * @type Array[Filter]
 	 * @default null
 	 **/
-	public var filters:Array<Filter>;
+	public var filters:Array<Dynamic>;
 
 	/**
 	* Returns an ID number that uniquely identifies the current cache for this display object.
